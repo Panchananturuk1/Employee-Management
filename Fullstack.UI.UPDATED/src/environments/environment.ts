@@ -8,7 +8,7 @@
 // };
 
 export const environment = {
-  // production: false,
+  production: false,
   baseApiUrl: 'https://localhost:7085'
 };
 
