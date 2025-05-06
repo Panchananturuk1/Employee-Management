@@ -1,0 +1,68 @@
+.form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.form-control, .form-select {
+  border-left: none;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #ced4da;
+  box-shadow: none;
+}
+
+.card {
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+}
+
+.badge {
+  padding: 0.5em 0.8em;
+}
+
+/* List group styling */
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  padding: 0.75rem 1.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+/* Status switch styling */
+.form-switch .form-check-input {
+  width: 2.5em;
+  margin-left: -2.8em;
+}
+
+.form-check-input:checked {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+/* Error messages */
+.text-danger {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-header, .card-footer {
+    padding: 0.75rem;
+  }
+}

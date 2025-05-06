@@ -9,7 +9,7 @@
 
 export const environment = {
   production: false,
-  baseApiUrl: 'https://localhost:7085'
+  baseApiUrl: 'https://employee-management-backend-25gg.onrender.com'
 };
 
 /*

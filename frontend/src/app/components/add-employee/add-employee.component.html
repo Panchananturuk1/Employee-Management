@@ -1,39 +1,150 @@
-<div class="container my-5">
-    <h1 class="mb-3">Add New Employee</h1>
+<div class="container-fluid py-4 fade-in">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1 class="display-5 text-primary fw-bold">Add New Employee</h1>
+      <p class="lead text-muted">Create a new employee profile in your organization</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-outline-secondary" routerLink="/employees">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+      </button>
+    </div>
+  </div>
 
-    <div class="row">
-        <div class="col-6">
-            <form #form="ngForm" (ngSubmit)="addEmployee()">
-                <div class="form-group">
-                  <label for="name" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="name" 
-                  name="name" [(ngModel)]="addEmployeeRequest.name">
-                </div>  
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="email"
-                    name="email" [(ngModel)]="addEmployeeRequest.email">
-                  </div> 
-                  <div class="form-group">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="number" class="form-control" id="phone"
-                    name="phone" [(ngModel)]="addEmployeeRequest.phone">
-                  </div>  
-                  <div class="form-group">
-                      <label for="salary" class="form-label">Salary</label>
-                      <input type="number" class="form-control" id="salary"
-                      name="salary" [(ngModel)]="addEmployeeRequest.salary">
-                    </div> 
-                    <div class="form-group">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text" class="form-control" id="department"
-                        name="department" [(ngModel)]="addEmployeeRequest.department">
-                      </div>  
-                    
-
-                <button type="submit" class="btn btn-primary">Save</button>
-        </form>
+  <div class="row">
+    <div class="col-md-4">
+      <!-- Help Card -->
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Information</h5>
         </div>
+        <div class="card-body">
+          <h6 class="mb-3">Adding a New Employee</h6>
+          <p>Fill out the form to create a new employee profile. All fields marked with an asterisk (*) are required.</p>
+          
+          <h6 class="mt-4 mb-3">Department Options</h6>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Engineering
+              <span class="badge rounded-pill badge-engineering">Tech</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Marketing
+              <span class="badge rounded-pill badge-marketing">Creative</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Sales
+              <span class="badge rounded-pill badge-sales">Business</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              HR
+              <span class="badge rounded-pill badge-hr">People</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Finance
+              <span class="badge rounded-pill badge-finance">Money</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
+    <div class="col-md-8">
+      <!-- Form Card -->
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Employee Details</h5>
+        </div>
+        <div class="card-body">
+          <form #form="ngForm" (ngSubmit)="addEmployee()">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="name" class="form-label">Full Name*</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <input type="text" class="form-control" id="name" name="name" 
+                         [(ngModel)]="addEmployeeRequest.name" required #nameField="ngModel">
+                </div>
+                <div *ngIf="nameField.invalid && (nameField.dirty || nameField.touched)" class="text-danger small mt-1">
+                  Name is required
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email Address*</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                  <input type="email" class="form-control" id="email" name="email" 
+                         [(ngModel)]="addEmployeeRequest.email" required email #emailField="ngModel">
+                </div>
+                <div *ngIf="emailField.invalid && (emailField.dirty || emailField.touched)" class="text-danger small mt-1">
+                  <div *ngIf="emailField.errors?.['required']">Email is required</div>
+                  <div *ngIf="emailField.errors?.['email']">Email format is invalid</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="phone" class="form-label">Phone Number*</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                  <input type="number" class="form-control" id="phone" name="phone" 
+                         [(ngModel)]="addEmployeeRequest.phone" required #phoneField="ngModel">
+                </div>
+                <div *ngIf="phoneField.invalid && (phoneField.dirty || phoneField.touched)" class="text-danger small mt-1">
+                  Phone number is required
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="department" class="form-label">Department*</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-building"></i></span>
+                  <select class="form-select" id="department" name="department" 
+                          [(ngModel)]="addEmployeeRequest.department" required #deptField="ngModel">
+                    <option value="" disabled selected>Select Department</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                  </select>
+                </div>
+                <div *ngIf="deptField.invalid && (deptField.dirty || deptField.touched)" class="text-danger small mt-1">
+                  Department is required
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="salary" class="form-label">Salary ($)*</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                  <input type="number" class="form-control" id="salary" name="salary" 
+                         [(ngModel)]="addEmployeeRequest.salary" required min="1" #salaryField="ngModel">
+                </div>
+                <div *ngIf="salaryField.invalid && (salaryField.dirty || salaryField.touched)" class="text-danger small mt-1">
+                  <div *ngIf="salaryField.errors?.['required']">Salary is required</div>
+                  <div *ngIf="salaryField.errors?.['min']">Salary must be greater than 0</div>
+                </div>
+              </div>
+              <div class="col-md-6 d-flex align-items-end">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="activeStatus" checked>
+                  <label class="form-check-label" for="activeStatus">Active Employee</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <button type="button" class="btn btn-outline-secondary me-md-2" routerLink="/employees">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+                <i class="fas fa-plus-circle me-2"></i>Add Employee
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

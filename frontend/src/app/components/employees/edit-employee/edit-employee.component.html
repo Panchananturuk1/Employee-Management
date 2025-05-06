@@ -1,47 +1,151 @@
-<div class="container my-5">
-    <h1 class="mb-3">Edit Employees</h1>
+<div class="container-fluid py-4 fade-in">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1 class="display-5 text-primary fw-bold">Edit Employee Profile</h1>
+      <p class="lead text-muted">Update employee information and details</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-outline-secondary me-2" routerLink="/employees">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+      </button>
+    </div>
+  </div>
 
-    <div class="row">
-        <div class="col-6">
-            <form #form="ngForm" (ngSubmit)="updateEmployee()">
-                <div class="form-group">
-                    <label for="id" class="form-label">Id</label>
-                    <input type="text" class="form-control" id="id" readonly
-                    name="id" [(ngModel)]="employeeDetails.id">
-                  </div>  
-                <div class="form-group">
-                  <label for="name" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="name" 
-                  name="name" [(ngModel)]="employeeDetails.name">
-                </div>  
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email"
-                    name="email" [(ngModel)]="employeeDetails.email">
-                  </div> 
-                  <div class="form-group">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="number" class="form-control" id="phone"
-                    name="phone" [(ngModel)]="employeeDetails.phone">
-                  </div>  
-                  <div class="form-group">
-                      <label for="salary" class="form-label">Salary</label>
-                      <input type="number" class="form-control" id="salary"
-                      name="salary" [(ngModel)]="employeeDetails.salary">
-                    </div> 
-                    <div class="form-group">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text" class="form-control" id="department"
-                        name="department" [(ngModel)]="employeeDetails.department">
-                      </div>  
-                    
-
-                <button type="submit" class="btn btn-primary mr-5">Save</button>
-                <button type="button" class="btn btn-danger"
-                 (click)="deleteEmployee(employeeDetails.id)">Delete</button>
-
-        </form>
+  <div class="row">
+    <div class="col-md-4">
+      <!-- Employee Card -->
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Employee Overview</h5>
         </div>
+        <div class="card-body text-center">
+          <div class="mb-4">
+            <div class="avatar-circle mx-auto mb-3">
+              <i class="fas fa-user fa-4x text-primary"></i>
+            </div>
+            <h4>{{ employeeDetails.name || 'Employee Name' }}</h4>
+            <p class="text-muted">{{ employeeDetails.department || 'Department' }}</p>
+          </div>
+          <div class="d-flex justify-content-around">
+            <div class="text-center">
+              <i class="fas fa-envelope text-info mb-2"></i>
+              <p class="small">{{ employeeDetails.email || 'Email' }}</p>
+            </div>
+            <div class="text-center">
+              <i class="fas fa-phone text-success mb-2"></i>
+              <p class="small">{{ employeeDetails.phone || 'Phone' }}</p>
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Salary</span>
+            <span class="badge bg-success">${{ employeeDetails.salary | number:'1.0-0' }}</span>
+          </div>
+        </div>
+        <div class="card-footer bg-light">
+          <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="fas fa-trash me-2"></i>Delete Employee
+          </button>
+        </div>
+      </div>
     </div>
 
+    <div class="col-md-8">
+      <!-- Edit Form -->
+      <div class="card">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Employee Information</h5>
+          <span class="badge bg-primary">ID: {{ employeeDetails.id?.substring(0, 8) }}</span>
+        </div>
+        <div class="card-body">
+          <form #form="ngForm" (ngSubmit)="updateEmployee()">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="name" class="form-label">Full Name</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <input type="text" class="form-control" id="name" name="name" [(ngModel)]="employeeDetails.name" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email Address</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                  <input type="email" class="form-control" id="email" name="email" [(ngModel)]="employeeDetails.email" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="phone" class="form-label">Phone Number</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                  <input type="number" class="form-control" id="phone" name="phone" [(ngModel)]="employeeDetails.phone" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="department" class="form-label">Department</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-building"></i></span>
+                  <select class="form-select" id="department" name="department" [(ngModel)]="employeeDetails.department" required>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="salary" class="form-label">Salary</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                  <input type="number" class="form-control" id="salary" name="salary" [(ngModel)]="employeeDetails.salary" required>
+                </div>
+              </div>
+              <div class="col-md-6 d-flex align-items-end">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="activeStatus" checked>
+                  <label class="form-check-label" for="activeStatus">Active Employee</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <button type="button" class="btn btn-outline-secondary me-md-2" routerLink="/employees">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong>{{ employeeDetails.name }}</strong>?</p>
+        <p class="mb-0 text-danger"><small><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone!</small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="deleteEmployee(employeeDetails.id)" data-bs-dismiss="modal">
+          <i class="fas fa-trash me-2"></i>Delete Employee
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

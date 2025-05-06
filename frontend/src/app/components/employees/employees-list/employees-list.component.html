@@ -1,30 +1,182 @@
-<div class="container my-5">
-    <h1 class="mb-3">Employee</h1>
+<div class="container-fluid py-4 fade-in">
+  <!-- Dashboard Header -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1 class="display-5 fw-bold text-primary">Employee Dashboard</h1>
+      <p class="lead text-muted">Manage your organization's workforce efficiently</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <a routerLink="/employees/add" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Employee
+      </a>
+    </div>
+  </div>
 
-    <table class="table" *ngIf="employees && employees.length > 0">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Salary</th>
-                <th>Department</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let employee of employees">
-                <td>{{ employee.id }}</td>
-                <td>{{ employee.name }}</td>
-                <td>{{ employee.email }}</td>
-                <td>{{ employee.phone }}</td>
-                <td>{{ employee.salary }}</td>
-                <td>{{ employee.department }}</td>
-                <td><a [routerLink]="['/employees', 'edit', employee.id]">View</a></td>
-            </tr>
-        </tbody>
-    </table>
-    <p *ngIf="!employees || employees.length <= 0" >No Employees Found</p>
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Total Employees</h6>
+              <h2 class="mb-0">{{ employees.length }}</h2>
+            </div>
+            <i class="fas fa-users fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-success text-white mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Departments</h6>
+              <h2 class="mb-0">{{ getUniqueDepartments().length }}</h2>
+            </div>
+            <i class="fas fa-building fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-info text-white mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Avg. Salary</h6>
+              <h2 class="mb-0">${{ calculateAverageSalary() | number:'1.0-0' }}</h2>
+            </div>
+            <i class="fas fa-dollar-sign fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-warning text-white mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title">Top Department</h6>
+              <h2 class="mb-0">{{ getTopDepartment() }}</h2>
+            </div>
+            <i class="fas fa-chart-line fa-2x"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Department Filter -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Filter by Department</h5>
+        </div>
+        <div class="card-body">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn" [class.btn-primary]="selectedDepartment === 'All'" 
+                    (click)="filterByDepartment('All')">All</button>
+            <button *ngFor="let dept of getUniqueDepartments()" type="button" class="btn"
+                    [class.btn-primary]="selectedDepartment === dept"
+                    (click)="filterByDepartment(dept)">{{ dept }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Data Visualization (Chart) -->
+  <div class="row mb-4" *ngIf="employees.length > 0">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Department Distribution</h5>
+        </div>
+        <div class="card-body text-center">
+          <div class="chart-container">
+            <canvas id="departmentChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employees Table -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Employees List</h5>
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control" placeholder="Search employees..." 
+                  [(ngModel)]="searchTerm" (keyup)="applySearch()">
+            <button class="btn btn-outline-secondary" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" *ngIf="filteredEmployees.length > 0">
+              <thead>
+                <tr>
+                  <th>
+                    <a href="javascript:void(0)" (click)="sort('name')">
+                      Name <i class="fas fa-sort"></i>
+                    </a>
+                  </th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>
+                    <a href="javascript:void(0)" (click)="sort('salary')">
+                      Salary <i class="fas fa-sort"></i>
+                    </a>
+                  </th>
+                  <th>
+                    <a href="javascript:void(0)" (click)="sort('department')">
+                      Department <i class="fas fa-sort"></i>
+                    </a>
+                  </th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let employee of filteredEmployees">
+                  <td>{{ employee.name }}</td>
+                  <td>{{ employee.email }}</td>
+                  <td>{{ employee.phone }}</td>
+                  <td>${{ employee.salary | number:'1.0-0' }}</td>
+                  <td>
+                    <span class="badge rounded-pill" 
+                          [ngClass]="'badge-' + employee.department.toLowerCase()">
+                      {{ employee.department }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a [routerLink]="['/employees', 'edit', employee.id]" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <button type="button" class="btn btn-sm btn-outline-danger ms-1">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div *ngIf="filteredEmployees.length === 0" class="text-center py-5">
+              <i class="fas fa-search fa-3x text-muted mb-3"></i>
+              <h4>No employees found</h4>
+              <p class="text-muted">Try changing your search or filter criteria</p>
+              <button class="btn btn-outline-primary" (click)="resetFilters()">Reset Filters</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

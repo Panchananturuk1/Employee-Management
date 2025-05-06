@@ -1,0 +1,68 @@
+.avatar-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.form-control, .form-select {
+  border-left: none;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #ced4da;
+  box-shadow: none;
+}
+
+.card {
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+}
+
+/* Status switch styling */
+.form-switch .form-check-input {
+  width: 2.5em;
+  margin-left: -2.8em;
+}
+
+.form-check-input:checked {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.modal-content {
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .card-header, .card-footer {
+    padding: 0.75rem;
+  }
+}

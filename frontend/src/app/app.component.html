@@ -1,23 +1,39 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" href="#">Employee-Management-Portal</a>
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-users-cog me-2"></i>
+      Employee Hub
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <!-- <a class="nav-link active" aria-current="page" routerLink="/employees">Employees</a> -->
-         
+          <a class="nav-link" routerLink="/employees" routerLinkActive="active">
+            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" routerLink="/employees/add">Add Employees</a>
-         
+          <a class="nav-link" routerLink="/employees/add" routerLinkActive="active">
+            <i class="fas fa-user-plus me-1"></i> Add Employee
+          </a>
         </li>
       </ul>
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search employees..." aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+      </form>
     </div>
   </div>
 </nav>
 
+<main>
+  <router-outlet></router-outlet>
+</main>
 
-<router-outlet></router-outlet>
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container text-center">
+    <span class="text-muted">© 2023 Employee Management System</span>
+  </div>
+</footer>
