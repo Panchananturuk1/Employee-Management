@@ -1,18 +1,25 @@
-# Angular-14-CRUD-with-.NET-6-Web-API  
-**Project Name: Employee Management System**  
+# Employee Management System
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-View_App-blue?style=for-the-badge)](https://employee-management-jelx.onrender.com/)
+
+**A modern, interactive employee management dashboard built with Angular 14 and .NET 6**
 
 ## 📌 Overview  
-The **Employee Management System** is a full-stack web application built using **Angular 14** for the frontend and **.NET 6 Web API** for the backend. It provides CRUD (Create, Read, Update, Delete) operations to manage employees efficiently.
+The **Employee Management System** is a comprehensive full-stack web application designed to streamline workforce management. Built with **Angular 14** for the frontend and **.NET 6 Web API** for the backend, it offers a responsive and intuitive interface to manage employee records efficiently.
+
+The system features a modern dashboard with data visualization, filterable employee lists, and a clean, user-friendly design. It leverages PostgreSQL via Supabase for reliable data storage and provides a complete CRUD (Create, Read, Update, Delete) functionality through a RESTful API.
 
 ---
 
 ## 🚀 Features  
-✅ Add, edit, delete, and view employee records  
-✅ RESTful API built with .NET 6  
-✅ Angular 14 for a responsive and interactive UI  
+✅ Interactive dashboard with employee statistics and data visualization  
+✅ Advanced filtering and sorting of employee records  
+✅ Add, edit, delete, and view employee details with a modern UI  
+✅ RESTful API built with .NET 6 Web API  
+✅ Responsive design that works on desktop and mobile devices  
 ✅ PostgreSQL database integration via Supabase  
-✅ Validation for input fields  
-✅ Error handling and notifications  
+✅ Form validation with visual feedback  
+✅ Error handling and user notifications  
 
 ---
 
