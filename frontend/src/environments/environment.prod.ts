@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseApiUrl: 'YOUR_BACKEND_API_URL_HERE' // Replace with your actual backend URL when deployed
+  baseApiUrl: 'https://employee-management-api-your-suffix.onrender.com' // Replace with your actual backend API URL when deployed
 };
