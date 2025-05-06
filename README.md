@@ -32,9 +32,49 @@ The **Employee Management System** is a full-stack web application built using *
 
 ---
 
+## 📁 Project Structure
+The project follows a clean separation of concerns with a frontend and backend folder:
+
+- `/frontend` - Angular application
+- `/backend` - .NET Core API
+
+---
+
 ## 🎯 Installation & Setup  
 
 ### **1️⃣ Clone the repository**  
 ```sh
 git clone https://github.com/your-username/Angular-14-CRUD-with-.NET-6-Web-API.git
 cd Angular-14-CRUD-with-.NET-6-Web-API
+```
+
+### **2️⃣ Setting up the Backend**
+```sh
+cd backend
+dotnet restore
+dotnet run
+```
+
+### **3️⃣ Setting up the Frontend**
+```sh
+cd frontend
+npm install
+ng serve
+```
+
+Navigate to `http://localhost:4200/` to view the application.
+
+---
+
+## 📝 API Endpoints
+
+- GET `/api/employees` - Retrieve all employees
+- GET `/api/employees/{id}` - Retrieve a specific employee
+- POST `/api/employees` - Add a new employee
+- PUT `/api/employees/{id}` - Update an employee
+- DELETE `/api/employees/{id}` - Delete an employee
+
+---
+
+## 👨‍💻 Contributors
+Your contributions are welcome!
