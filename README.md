@@ -83,12 +83,14 @@ Navigate to `http://localhost:4200/` to view the application.
 1. **Root Directory:** `frontend`
 2. **Build Command:** `npm install && npm run build --prod`
 3. **Publish Directory:** `dist/fullstack.ui`
+4. **Live URL:** [https://employee-management-jelx.onrender.com/](https://employee-management-jelx.onrender.com/)
 
 ### **Backend Deployment (Render)**
 
 1. **Root Directory:** `backend`
 2. **Build Command:** `dotnet publish -c Release`
 3. **Start Command:** `dotnet ./Fullstack.API/bin/Release/net8.0/publish/Fullstack.API.dll`
+4. **API URL:** [https://employee-management-backend-25gg.onrender.com](https://employee-management-backend-25gg.onrender.com)
 
 ### **Database Setup (Supabase)**
 
