@@ -14,9 +14,9 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fullstack API", Version = "v1" });
 });
 
-// Configure Entity Framework with SQL Server
+// Configure Entity Framework with PostgreSQL
 builder.Services.AddDbContext<FullStackDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FullStackConnectionString")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnectionString")));
 
 var app = builder.Build();
 
