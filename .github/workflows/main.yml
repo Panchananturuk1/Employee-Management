@@ -50,6 +50,14 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build -- --configuration production
+    - name: Deploy to Firebase Hosting
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: "${{ secrets.GITHUB_TOKEN }}"
+        firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+        channelId: live
+        projectId: employeemanagement-0
+        entryPoint: frontend
     # Add test step if you have unit tests
     # - name: Test
     #   run: npm test -- --watch=false --browsers=ChromeHeadless
