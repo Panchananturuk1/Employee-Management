@@ -1,6 +1,7 @@
 using Fullstack.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Google.Cloud.Firestore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,13 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fullstack API", Version = "v1" });
 });
 
-// Configure Entity Framework with PostgreSQL
-builder.Services.AddDbContext<FullStackDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnectionString")));
+// Configure Firestore
+builder.Services.AddSingleton(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var projectId = configuration["Firestore:ProjectId"] ?? "employeemanagement-0";
+    return FirestoreDb.Create(projectId);
+});
 
 var app = builder.Build();
 

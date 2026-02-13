@@ -1,9 +1,8 @@
-﻿namespace Fullstack.API.Models
+namespace Fullstack.API.Models
 {
     public class Employee
     {
-
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
@@ -14,11 +13,5 @@
         public long Salary { get; set; }
 
         public string Department { get; set; }
-
-
-
-
-
-
     }
 }

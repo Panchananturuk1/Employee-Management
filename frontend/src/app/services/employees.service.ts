@@ -1,31 +1,51 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { from, map, Observable } from 'rxjs';
 import { Employee } from '../models/employee.model';
+import { collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase.config';
 
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeesService {
 
-  baseApiUrl: string = environment.baseApiUrl;
-  private url = 'SuperHero';
-
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   getAllEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(this.baseApiUrl + '/api/employees');
+    const employeesCollection = collection(db, 'employees');
+    return from(getDocs(employeesCollection)).pipe(
+      map(snapshot =>
+        snapshot.docs.map(d => {
+          const data = d.data() as any;
+          return {
+            id: d.id,
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            salary: data.salary,
+            department: data.department
+          } as Employee;
+        })
+      )
+    );
   }
 
-  addEmployee(addEmployeeRequest: Employee): Observable<Employee[]> {
-    addEmployeeRequest.id = '00000000-0000-0000-0000-000000000000';
-    return this.http.post<Employee[]>(this.baseApiUrl + '/api/employees/', addEmployeeRequest); 
+  addEmployee(addEmployeeRequest: Employee): Observable<Employee> {
+    const employeesCollection = collection(db, 'employees');
+    const employeeToSave = {
+      name: addEmployeeRequest.name,
+      email: addEmployeeRequest.email,
+      phone: addEmployeeRequest.phone,
+      salary: addEmployeeRequest.salary,
+      department: addEmployeeRequest.department
+    };
+    return from(addDoc(employeesCollection, employeeToSave)).pipe(
+      map(ref => ({
+        id: ref.id,
+        ...employeeToSave
+      } as Employee))
+    );
   }
 
   // addEmployee(addEmployeeRequest: Employee): Observable<Employee> {
@@ -33,17 +53,56 @@ export class EmployeesService {
   // }
 
   getEmployee(id: string): Observable<Employee> {
-    return this.http.get<Employee>(this.baseApiUrl + '/api/employees/' + id);
+    const employeeDoc = doc(db, 'employees', id);
+    return from(getDoc(employeeDoc)).pipe(
+      map(snapshot => {
+        const data = snapshot.data() as any;
+        return {
+          id: snapshot.id,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          salary: data.salary,
+          department: data.department
+        } as Employee;
+      })
+    );
   }
 
 
   updateEmployee(id: string, updateEmployeeRequest: Employee):
    Observable<Employee> {
-    return this.http.put<Employee>(this.baseApiUrl + '/api/employees/' + id, updateEmployeeRequest, httpOptions);
+    const employeeDoc = doc(db, 'employees', id);
+    const employeeToUpdate = {
+      name: updateEmployeeRequest.name,
+      email: updateEmployeeRequest.email,
+      phone: updateEmployeeRequest.phone,
+      salary: updateEmployeeRequest.salary,
+      department: updateEmployeeRequest.department
+    };
+    return from(updateDoc(employeeDoc, employeeToUpdate)).pipe(
+      map(() => ({
+        id,
+        ...employeeToUpdate
+      } as Employee))
+    );
   }
 
   deleteEmployee(id: string): Observable<Employee> {
-    return this.http.delete<Employee>(this.baseApiUrl + '/api/employees/' + id);
+    const employeeDoc = doc(db, 'employees', id);
+    return from(deleteDoc(employeeDoc)).pipe(
+      map(
+        () =>
+          ({
+            id,
+            name: '',
+            email: '',
+            phone: 0,
+            salary: 0,
+            department: ''
+          } as Employee)
+      )
+    );
   }
 
 }
