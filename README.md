@@ -1,6 +1,7 @@
 # Employee Management System
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-View_App-blue?style=for-the-badge)](https://employeemanagement-0.web.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Firebase-blue?style=for-the-badge)](https://employeemanagement-0.web.app)
+[![Secondary Demo](https://img.shields.io/badge/Secondary_Demo-Render-orange?style=for-the-badge)](https://employee-management-jelx.onrender.com/)
 
 **A modern, interactive employee management dashboard built with Angular 14, .NET 6, and Firebase**
 
@@ -82,7 +83,8 @@ Navigate to `http://localhost:4200/` to view the application.
 
 ### **Frontend & Database (Firebase)**
 1. **Build & Deploy:** Automated via GitHub Actions on every push to `main`.
-2. **Live URL:** [https://employeemanagement-0.web.app](https://employeemanagement-0.web.app)
+2. **Primary Live URL:** [https://employeemanagement-0.web.app](https://employeemanagement-0.web.app)
+3. **Secondary Mirror (Render):** [https://employee-management-jelx.onrender.com/](https://employee-management-jelx.onrender.com/)
 
 ### **Backend API (.NET)**
 The .NET backend can be containerized using the included `Dockerfile` and deployed to services like **Google Cloud Run** or **Render**.
