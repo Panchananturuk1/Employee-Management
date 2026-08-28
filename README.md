@@ -16,20 +16,17 @@ The system features a modern dashboard with data visualization, filterable emplo
 
 ## 📸 Screenshots
 
-### Sign In — dark mode
-The whole app ships with a dark theme that follows your system preference and remembers your choice.
+### Home — Employee Dashboard
+The signed-in home screen shows workforce stats, department filters, CSV export, and print.
 
-![Employee Hub sign-in screen rendered in dark mode](docs/screenshots/login-dark.png)
+![Employee Hub dashboard home with stats cards](docs/screenshots/dashboard-home.png)
 
-### Sign Up — light mode
-New accounts pick their access level at registration: **Member** for read-only access, or **Administrator** for full control over employee records.
+![Employee Hub department chart and employee list](docs/screenshots/dashboard-charts.png)
 
-![Employee Hub sign-up screen in light mode showing the account type selector](docs/screenshots/signup-light.png)
+### Sign In
+Dark-mode login for Employee Hub.
 
-### Friendly 404
-Any unknown route lands on a proper not-found page instead of an empty screen.
-
-![Employee Hub 404 page](docs/screenshots/not-found-light.png)
+![Employee Hub sign-in screen in dark mode](docs/screenshots/login-dark.png)
 
 ---
 
