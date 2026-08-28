@@ -1,0 +1,143 @@
+<div class="container-fluid py-4 fade-in" *ngIf="user">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1 class="display-5 fw-bold text-primary">My Account</h1>
+      <p class="lead text-muted">Update your personal details and password</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-outline-secondary" routerLink="/employees">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Account Overview</h5>
+        </div>
+        <div class="card-body text-center">
+          <img *ngIf="profileRequest.photoURL" [src]="profileRequest.photoURL" class="avatar-image mb-3"
+               alt="Profile picture">
+          <div *ngIf="!profileRequest.photoURL" class="avatar-initials mx-auto mb-3">{{ initials || '?' }}</div>
+
+          <h4 class="mb-1">{{ user.displayName || 'Unnamed user' }}</h4>
+          <p class="text-muted small mb-3">{{ user.email }}</p>
+
+          <span class="badge rounded-pill" [ngClass]="user.role === 'admin' ? 'bg-primary' : 'bg-secondary'">
+            <i class="fas me-1" [ngClass]="user.role === 'admin' ? 'fa-user-shield' : 'fa-eye'"></i>
+            {{ user.role === 'admin' ? 'Administrator' : 'Member' }}
+          </span>
+
+          <hr>
+
+          <p class="small text-muted mb-0" *ngIf="user.role === 'admin'">
+            You can add, edit and delete employee records.
+          </p>
+          <p class="small text-muted mb-0" *ngIf="user.role !== 'admin'">
+            You have read-only access to employee records.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Personal Details</h5>
+        </div>
+        <div class="card-body">
+          <form #profileForm="ngForm" (ngSubmit)="saveProfile()">
+            <div class="mb-3">
+              <label for="displayName" class="form-label">Display Name</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" id="displayName" name="displayName"
+                       [(ngModel)]="profileRequest.displayName" required minlength="2">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="photoURL" class="form-label">Avatar Image URL</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-image"></i></span>
+                <input type="url" class="form-control" id="photoURL" name="photoURL"
+                       placeholder="https://example.com/avatar.png" [(ngModel)]="profileRequest.photoURL">
+              </div>
+              <div class="form-text">Leave blank to show your initials instead.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="accountEmail" class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" class="form-control" id="accountEmail" name="accountEmail"
+                       [value]="user.email" disabled>
+              </div>
+              <div class="form-text">Your sign-in email cannot be changed here.</div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="submit" class="btn btn-primary" [disabled]="!profileForm.valid || isSavingProfile">
+                <span *ngIf="isSavingProfile" class="spinner-border spinner-border-sm me-2"></span>
+                <i class="fas fa-save me-2" *ngIf="!isSavingProfile"></i>Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Change Password</h5>
+        </div>
+        <div class="card-body">
+          <form #passwordForm="ngForm" (ngSubmit)="changePassword()">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="currentPassword" name="currentPassword"
+                       [(ngModel)]="passwordRequest.currentPassword" required autocomplete="current-password">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="newPassword" class="form-label">New Password</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-key"></i></span>
+                  <input type="password" class="form-control" id="newPassword" name="newPassword"
+                         [(ngModel)]="passwordRequest.newPassword" required minlength="6"
+                         autocomplete="new-password">
+                </div>
+              </div>
+              <div class="col-md-6 mt-3 mt-md-0">
+                <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-key"></i></span>
+                  <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
+                         [(ngModel)]="passwordRequest.confirmPassword" required autocomplete="new-password">
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-warning py-2 small"
+                 *ngIf="passwordRequest.confirmPassword && !newPasswordsMatch">
+              <i class="fas fa-exclamation-triangle me-2"></i>The two new passwords do not match.
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="submit" class="btn btn-outline-primary"
+                      [disabled]="!passwordForm.valid || !newPasswordsMatch || isSavingPassword">
+                <span *ngIf="isSavingPassword" class="spinner-border spinner-border-sm me-2"></span>
+                <i class="fas fa-shield-halved me-2" *ngIf="!isSavingPassword"></i>Update Password
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

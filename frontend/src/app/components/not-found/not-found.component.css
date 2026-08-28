@@ -1,0 +1,11 @@
+.error-code {
+  font-size: 7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 576px) {
+  .error-code {
+    font-size: 5rem;
+  }
+}

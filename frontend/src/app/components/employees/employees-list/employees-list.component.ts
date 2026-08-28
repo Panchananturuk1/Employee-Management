@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Employee } from 'src/app/models/employee.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { EmployeesService } from 'src/app/services/employees.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 // Create an interface for Chart from the global Chart.js library
 declare global {
@@ -18,7 +22,7 @@ interface DepartmentCounts {
   templateUrl: './employees-list.component.html',
   styleUrls: ['./employees-list.component.css']
 })
-export class EmployeesListComponent implements OnInit {
+export class EmployeesListComponent implements OnInit, OnDestroy {
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   selectedDepartment: string = 'All';
@@ -26,22 +30,79 @@ export class EmployeesListComponent implements OnInit {
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   departmentChart: any;
+  isLoading = true;
 
-  constructor(private employeesService: EmployeesService) { }
+  currentPage = 1;
+  pageSize = 8;
+  pageSizeOptions = [5, 8, 15, 25];
+
+  employeePendingDelete?: Employee;
+
+  private employeesSubscription?: Subscription;
+  private themeSubscription?: Subscription;
+
+  constructor(
+    private employeesService: EmployeesService,
+    private authService: AuthService,
+    private themeService: ThemeService,
+    private toastService: ToastService
+  ) { }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredEmployees.length / this.pageSize));
+  }
+
+  get pagedEmployees(): Employee[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredEmployees.slice(start, start + this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
+
+  get rangeStart(): number {
+    return this.filteredEmployees.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredEmployees.length);
+  }
 
   ngOnInit(): void {
     this.loadEmployees();
+
+    // Chart.js paints its labels onto a canvas, so it has to be redrawn on a theme change.
+    this.themeSubscription = this.themeService.theme$.subscribe({
+      next: () => this.initChart()
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.employeesSubscription?.unsubscribe();
+    this.themeSubscription?.unsubscribe();
+
+    if (this.departmentChart) {
+      this.departmentChart.destroy();
+    }
   }
 
   loadEmployees(): void {
-    this.employeesService.getAllEmployees()
+    this.employeesSubscription = this.employeesService.streamEmployees()
       .subscribe({
         next: (employees) => {
           this.employees = employees;
-          this.filteredEmployees = [...employees];
+          this.isLoading = false;
+          this.applyFilters();
           setTimeout(() => this.initChart(), 500); // Delay to ensure DOM is ready
         },
         error: (response) => {
+          this.isLoading = false;
+          this.toastService.error('Could not load employees. Please refresh and try again.');
           console.log(response);
         }
       });
@@ -70,6 +131,8 @@ export class EmployeesListComponent implements OnInit {
       if (this.departmentChart) {
         this.departmentChart.destroy();
       }
+
+      const labelColor = this.themeService.isDark ? '#e4e6eb' : '#666666';
       
       this.departmentChart = new window.Chart(ctx, {
         type: 'pie',
@@ -90,6 +153,7 @@ export class EmployeesListComponent implements OnInit {
               position: 'right',
               labels: {
                 boxWidth: 15,
+                color: labelColor,
                 font: {
                   size: 12
                 }
@@ -98,6 +162,7 @@ export class EmployeesListComponent implements OnInit {
             title: {
               display: true,
               text: 'Employee Distribution by Department',
+              color: labelColor,
               font: {
                 size: 14
               }
@@ -117,6 +182,10 @@ export class EmployeesListComponent implements OnInit {
     if (this.employees.length === 0) return 0;
     const total = this.employees.reduce((sum, emp) => sum + emp.salary, 0);
     return Math.round(total / this.employees.length);
+  }
+
+  calculateTotalPayroll(): number {
+    return this.employees.reduce((sum, emp) => sum + emp.salary, 0);
   }
 
   getTopDepartment(): string {
@@ -175,6 +244,7 @@ export class EmployeesListComponent implements OnInit {
     }
     
     this.filteredEmployees = filtered;
+    this.clampCurrentPage();
   }
 
   sort(column: string): void {
@@ -214,5 +284,81 @@ export class EmployeesListComponent implements OnInit {
     this.searchTerm = '';
     this.sortColumn = '';
     this.filteredEmployees = [...this.employees];
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  changePageSize(size: number): void {
+    this.pageSize = Number(size);
+    this.currentPage = 1;
+  }
+
+  confirmDelete(employee: Employee): void {
+    this.employeePendingDelete = employee;
+  }
+
+  deletePendingEmployee(): void {
+    const employee = this.employeePendingDelete;
+
+    if (!employee) {
+      return;
+    }
+
+    this.employeesService.deleteEmployee(employee.id)
+      .subscribe({
+        next: () => {
+          this.toastService.success(`${employee.name} was removed.`);
+          this.employeePendingDelete = undefined;
+        },
+        error: () => this.toastService.error(`Could not delete ${employee.name}. Please try again.`)
+      });
+  }
+
+  exportToCsv(): void {
+    if (this.filteredEmployees.length === 0) {
+      this.toastService.info('There are no employees to export.');
+      return;
+    }
+
+    const headers = ['Name', 'Email', 'Phone', 'Salary', 'Department'];
+    const rows = this.filteredEmployees.map(emp =>
+      [emp.name, emp.email, emp.phone, emp.salary, emp.department]
+        .map(value => this.escapeCsvValue(value))
+        .join(',')
+    );
+
+    // The BOM keeps Excel from mangling non-ASCII names.
+    const csv = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `employees-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+    this.toastService.success(`Exported ${this.filteredEmployees.length} employees to CSV.`);
+  }
+
+  printReport(): void {
+    window.print();
+  }
+
+  private clampCurrentPage(): void {
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+  }
+
+  private escapeCsvValue(value: string | number): string {
+    const text = String(value ?? '');
+    return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
   }
 }

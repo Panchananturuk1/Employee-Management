@@ -1,0 +1,34 @@
+.form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.avatar-image {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-light);
+}
+
+.avatar-initials {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 2.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  padding: 0.5em 0.9em;
+}

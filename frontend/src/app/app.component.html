@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark no-print">
   <div class="container">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" routerLink="/employees">
       <i class="fas fa-users-cog me-2"></i>
       Employee Hub
     </a>
@@ -8,22 +8,64 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" *ngIf="user$ | async as user">
         <li class="nav-item">
           <a class="nav-link" routerLink="/employees" routerLinkActive="active">
             <i class="fas fa-tachometer-alt me-1"></i> Dashboard
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="user.role === 'admin'">
           <a class="nav-link" routerLink="/employees/add" routerLinkActive="active">
             <i class="fas fa-user-plus me-1"></i> Add Employee
           </a>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search employees..." aria-label="Search">
-        <button class="btn btn-outline-light" type="submit">Search</button>
-      </form>
+
+      <div class="d-flex align-items-center ms-auto gap-2">
+        <button type="button" class="btn btn-outline-light btn-sm theme-toggle" (click)="toggleTheme()"
+                [attr.aria-label]="(theme$ | async) === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+                [title]="(theme$ | async) === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+          <i class="fas" [ngClass]="(theme$ | async) === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
+        </button>
+
+        <ng-container *ngIf="user$ | async as user; else signedOutLinks">
+          <div class="dropdown">
+            <button class="btn btn-dark dropdown-toggle d-flex align-items-center" type="button"
+                    id="accountMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              <img *ngIf="user.photoURL" [src]="user.photoURL" class="nav-avatar me-2" alt="">
+              <span *ngIf="!user.photoURL" class="nav-avatar-initials me-2">{{ initialsFor(user) }}</span>
+              <span class="d-none d-lg-inline">{{ user.displayName || user.email }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountMenu">
+              <li>
+                <span class="dropdown-item-text small">
+                  <span class="d-block text-muted">{{ user.email }}</span>
+                  <span class="badge rounded-pill mt-1"
+                        [ngClass]="user.role === 'admin' ? 'bg-primary' : 'bg-secondary'">
+                    {{ user.role === 'admin' ? 'Administrator' : 'Member' }}
+                  </span>
+                </span>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" routerLink="/profile">
+                  <i class="fas fa-user-gear me-2"></i>My Account
+                </a>
+              </li>
+              <li>
+                <button class="dropdown-item text-danger" type="button" (click)="logout()">
+                  <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                </button>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+
+        <ng-template #signedOutLinks>
+          <a class="btn btn-outline-light btn-sm" routerLink="/login">Sign In</a>
+          <a class="btn btn-primary btn-sm" routerLink="/signup">Sign Up</a>
+        </ng-template>
+      </div>
     </div>
   </div>
 </nav>
@@ -32,8 +74,10 @@
   <router-outlet></router-outlet>
 </main>
 
-<footer class="footer mt-auto py-3 bg-light">
+<app-toast-container></app-toast-container>
+
+<footer class="footer mt-auto py-3 bg-light no-print">
   <div class="container text-center">
-    <span class="text-muted">© 2023 Employee Management System</span>
+    <span class="text-muted">&copy; {{ currentYear }} Employee Management System</span>
   </div>
 </footer>

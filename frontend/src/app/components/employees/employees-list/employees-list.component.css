@@ -12,3 +12,21 @@
     height: 250px;
   }
 }
+
+.page-size-select {
+  width: auto;
+}
+
+.page-link {
+  color: var(--primary);
+}
+
+.page-item.active .page-link {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+table a {
+  color: var(--primary);
+}

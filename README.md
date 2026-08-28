@@ -14,14 +14,69 @@ The system features a modern dashboard with data visualization, filterable emplo
 
 ---
 
+## 📸 Screenshots
+
+### Sign In — dark mode
+The whole app ships with a dark theme that follows your system preference and remembers your choice.
+
+![Employee Hub sign-in screen rendered in dark mode](docs/screenshots/login-dark.png)
+
+### Sign Up — light mode
+New accounts pick their access level at registration: **Member** for read-only access, or **Administrator** for full control over employee records.
+
+![Employee Hub sign-up screen in light mode showing the account type selector](docs/screenshots/signup-light.png)
+
+### Friendly 404
+Any unknown route lands on a proper not-found page instead of an empty screen.
+
+![Employee Hub 404 page](docs/screenshots/not-found-light.png)
+
+---
+
 ## 🚀 Features  
+✅ **Email/password authentication** with signup, login, and password reset (Firebase Auth)  
+✅ **Role-based access**: administrators manage records, members get read-only access  
+✅ Protected routes via Angular route guards, plus a friendly 404 page  
 ✅ Interactive dashboard with employee statistics and data visualization  
-✅ Advanced filtering and sorting of employee records  
+✅ Advanced filtering, sorting, and pagination of employee records  
 ✅ Add, edit, delete, and view employee details with a modern UI  
-✅ **Hybrid Data Layer**: Direct Firebase SDK access + .NET 6 REST API  
+✅ **Live updates**: the dashboard reacts to Firestore changes without a refresh  
+✅ **CSV export** and a print-friendly report view  
+✅ **Dark mode** with a remembered preference  
+✅ Toast notifications for every success and failure  
+✅ Account page for updating display name, avatar, and password  
+✅ **Hybrid Data Layer**: Direct Firebase SDK access + .NET REST API  
 ✅ Responsive design that works on desktop and mobile devices  
-✅ Real-time database updates via Firestore  
 ✅ Form validation with visual feedback  
+
+---
+
+## 🔐 Authentication & Roles
+
+Authentication runs entirely through **Firebase Auth** (email/password). Each account also gets a
+profile document at `users/{uid}` in Firestore holding its `displayName`, `photoURL`, and `role`.
+
+| Role | Permissions |
+|------|-------------|
+| `admin` | View, add, edit, and delete employees |
+| `user` (Member) | View employees, dashboard, exports, and reports only |
+
+The role is chosen on the signup screen so both access levels are easy to try. **This is convenient
+for a demo but not secure on its own** — a determined user could write their own role. To harden it,
+move role assignment to a Cloud Function using
+[custom claims](https://firebase.google.com/docs/auth/admin/custom-claims) and make the `role` field
+read-only to clients in your Firestore rules.
+
+### Routes
+
+| Route | Access |
+|-------|--------|
+| `/login`, `/signup` | Public |
+| `/employees` | Signed in |
+| `/employees/:id` | Signed in |
+| `/profile` | Signed in |
+| `/employees/add` | Admin only |
+| `/employees/edit/:id` | Admin only |
 
 ---
 
@@ -93,18 +148,36 @@ The .NET backend can be containerized using the included `Dockerfile` and deploy
 
 1. **Create Project:** Create a new project in the [Firebase Console](https://console.firebase.google.com/).
 2. **Firestore Database:** Enable Firestore in "Production Mode" or "Test Mode".
-3. **Security Rules:** Update your Firestore rules to allow authenticated (or public for dev) access:
+3. **Authentication:** Under **Build → Authentication → Sign-in method**, enable the
+   **Email/Password** provider. Signup and login will fail with
+   `auth/operation-not-allowed` until this is on.
+4. **Security Rules:** These rules match the app's role model — everyone signed in can read
+   employees, only admins can write, and each user can only touch their own profile document:
    ```javascript
    rules_version = '2';
    service cloud.firestore {
      match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if true; // Change to auth != null for production
+       function isSignedIn() {
+         return request.auth != null;
+       }
+
+       function isAdmin() {
+         return isSignedIn() &&
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+       }
+
+       match /users/{userId} {
+         allow read, create, update: if isSignedIn() && request.auth.uid == userId;
+       }
+
+       match /employees/{employeeId} {
+         allow read: if isSignedIn();
+         allow write: if isAdmin();
        }
      }
    }
    ```
-4. **Environment Variables:** Add your Firebase configuration to `frontend/src/app/firebase.config.ts`.
+5. **Environment Variables:** Add your Firebase configuration to `frontend/src/app/firebase.config.ts`.
 
 ---
 

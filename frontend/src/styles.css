@@ -155,3 +155,164 @@ label {
     margin-bottom: 1.5rem;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Dark theme
+   Bootstrap 5.0 has no built-in dark mode, so these rules repaint the
+   components the app actually uses. Toggled by ThemeService on <body>.
+   --------------------------------------------------------------------------- */
+body.dark-theme {
+  --surface: #1e232b;
+  --surface-raised: #262c36;
+  --border: #333b47;
+  --text: #e4e6eb;
+  --text-muted: #9aa4b2;
+
+  background-color: #14171c;
+  color: var(--text);
+}
+
+body.dark-theme .card {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark-theme .card-header.bg-light,
+body.dark-theme .card-footer.bg-light,
+body.dark-theme .bg-light {
+  background-color: var(--surface-raised) !important;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark-theme .text-muted {
+  color: var(--text-muted) !important;
+}
+
+body.dark-theme .table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.06);
+  --bs-table-hover-color: var(--text);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark-theme .table thead th {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+body.dark-theme .table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+body.dark-theme .form-control,
+body.dark-theme .form-select {
+  background-color: var(--surface-raised);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark-theme .form-control::placeholder {
+  color: var(--text-muted);
+}
+
+body.dark-theme .form-control:disabled,
+body.dark-theme .form-control[readonly] {
+  background-color: #1a1f26;
+  color: var(--text-muted);
+}
+
+body.dark-theme .input-group-text {
+  background-color: #2c333e;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+body.dark-theme .modal-content,
+body.dark-theme .dropdown-menu,
+body.dark-theme .list-group-item {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark-theme .dropdown-item {
+  color: var(--text);
+}
+
+body.dark-theme .dropdown-item:hover,
+body.dark-theme .dropdown-item:focus {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+body.dark-theme .list-group-item:hover {
+  background-color: var(--surface-raised);
+}
+
+body.dark-theme .page-link {
+  background-color: var(--surface-raised);
+  border-color: var(--border);
+}
+
+body.dark-theme .btn-outline-secondary {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark-theme .btn-outline-secondary:hover {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+body.dark-theme .footer {
+  border-top: 1px solid var(--border);
+}
+
+body.dark-theme hr {
+  border-color: var(--border);
+}
+
+body.dark-theme code {
+  color: var(--secondary-light);
+}
+
+/* ---------------------------------------------------------------------------
+   Print / report layout
+   --------------------------------------------------------------------------- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body,
+  body.dark-theme {
+    background-color: #fff;
+    color: #000;
+  }
+
+  body.dark-theme .card,
+  body.dark-theme .table,
+  body.dark-theme .card-header.bg-light {
+    background-color: #fff !important;
+    color: #000;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+    page-break-inside: avoid;
+  }
+
+  .card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}

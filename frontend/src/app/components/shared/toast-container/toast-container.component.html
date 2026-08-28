@@ -1,0 +1,8 @@
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+  <div class="app-toast" *ngFor="let toast of toasts$ | async" [ngClass]="'app-toast-' + toast.type">
+    <i class="fas me-2" [ngClass]="iconFor(toast)"></i>
+    <span class="flex-grow-1">{{ toast.message }}</span>
+    <button type="button" class="btn-close btn-close-white ms-3" aria-label="Dismiss"
+            (click)="dismiss(toast.id)"></button>
+  </div>
+</div>

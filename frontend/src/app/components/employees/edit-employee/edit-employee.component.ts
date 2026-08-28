@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter,Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Employee } from 'src/app/models/employee.model';
 import { EmployeesService } from 'src/app/services/employees.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-edit-employee',
@@ -25,7 +26,7 @@ export class EditEmployeeComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute, private employeeService: EmployeesService,
-    private router: Router) { }
+    private router: Router, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe({
@@ -37,6 +38,10 @@ export class EditEmployeeComponent implements OnInit {
           .subscribe({
             next: (response) => {
               this.employeeDetails = response;
+            },
+            error: () => {
+              this.toastService.error('That employee could not be found.');
+              this.router.navigate(['employees']);
             }
           });
         }
@@ -57,19 +62,26 @@ export class EditEmployeeComponent implements OnInit {
 
   updateEmployee = () => {
     this.employeeService.updateEmployee(this.employeeDetails.id, this.employeeDetails)
-      .subscribe(
-        response => this.router.navigate(['employees']),
-        error => console.error(error)
-      );
+      .subscribe({
+        next: () => {
+          this.toastService.success(`${this.employeeDetails.name} was updated.`);
+          this.router.navigate(['employees']);
+        },
+        error: () => this.toastService.error('Could not save your changes. Please try again.')
+      });
   };
 
 
   deleteEmployee(id: string){
+    const name = this.employeeDetails.name;
+
     this.employeeService.deleteEmployee(id)
     .subscribe({
       next: (response) => {
+        this.toastService.success(`${name} was removed.`);
         this.router.navigate(['employees']);
-      }
+      },
+      error: () => this.toastService.error(`Could not delete ${name}. Please try again.`)
     });
   }
 

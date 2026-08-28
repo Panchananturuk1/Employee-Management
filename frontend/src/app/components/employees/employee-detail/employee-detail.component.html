@@ -1,0 +1,118 @@
+<div class="container-fluid py-4 fade-in">
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="text-muted mt-3 mb-0">Loading employee...</p>
+  </div>
+
+  <div class="text-center py-5" *ngIf="!isLoading && loadFailed">
+    <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+    <h4>Employee not found</h4>
+    <p class="text-muted">This record may have been deleted.</p>
+    <a routerLink="/employees" class="btn btn-outline-primary">Back to Dashboard</a>
+  </div>
+
+  <div *ngIf="!isLoading && employee">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h1 class="display-5 fw-bold text-primary">{{ employee.name }}</h1>
+        <p class="lead text-muted mb-0">
+          <span class="badge rounded-pill me-2" [ngClass]="'badge-' + employee.department.toLowerCase()">
+            {{ employee.department }}
+          </span>
+          Employee profile
+        </p>
+      </div>
+      <div class="col-md-4 text-end mt-3 mt-md-0">
+        <button class="btn btn-outline-secondary me-2" routerLink="/employees">
+          <i class="fas fa-arrow-left me-2"></i>Back
+        </button>
+        <a *ngIf="isAdmin" [routerLink]="['/employees', 'edit', employee.id]" class="btn btn-primary">
+          <i class="fas fa-edit me-2"></i>Edit
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <div class="avatar-initials mx-auto mb-3">{{ initials || '?' }}</div>
+            <h4 class="mb-1">{{ employee.name }}</h4>
+            <p class="text-muted mb-0">{{ employee.department }}</p>
+          </div>
+          <div class="card-footer bg-light" *ngIf="isAdmin">
+            <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal"
+                    data-bs-target="#detailDeleteModal">
+              <i class="fas fa-trash me-2"></i>Delete Employee
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Contact Information</h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-envelope text-info me-2"></i>Email</span>
+              <a [href]="'mailto:' + employee.email" class="text-decoration-none">{{ employee.email }}</a>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-phone text-success me-2"></i>Phone</span>
+              <a [href]="'tel:' + employee.phone" class="text-decoration-none">{{ employee.phone }}</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Employment Details</h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-building text-primary me-2"></i>Department</span>
+              <span class="badge rounded-pill" [ngClass]="'badge-' + employee.department.toLowerCase()">
+                {{ employee.department }}
+              </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-dollar-sign text-warning me-2"></i>Annual Salary</span>
+              <span class="badge bg-success">${{ employee.salary | number:'1.0-0' }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-fingerprint text-secondary me-2"></i>Record ID</span>
+              <code class="small">{{ employee.id }}</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="detailDeleteModal" tabindex="-1" aria-labelledby="detailDeleteModalLabel"
+     aria-hidden="true" *ngIf="employee">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="detailDeleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong>{{ employee.name }}</strong>?</p>
+        <p class="mb-0 text-danger">
+          <small><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone!</small>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="deleteEmployee()" data-bs-dismiss="modal">
+          <i class="fas fa-trash me-2"></i>Delete Employee
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

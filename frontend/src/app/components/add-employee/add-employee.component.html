@@ -138,8 +138,9 @@
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
               <button type="button" class="btn btn-outline-secondary me-md-2" routerLink="/employees">Cancel</button>
-              <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
-                <i class="fas fa-plus-circle me-2"></i>Add Employee
+              <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSubmitting">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                <i class="fas fa-plus-circle me-2" *ngIf="!isSubmitting"></i>Add Employee
               </button>
             </div>
           </form>

@@ -1,0 +1,44 @@
+.auth-wrapper {
+  padding: 3rem 0;
+}
+
+.auth-card {
+  border: none;
+  box-shadow: 0 10px 40px rgba(34, 41, 47, 0.12);
+}
+
+/* The global card hover lift is distracting on a form the user is typing into. */
+.auth-card:hover {
+  transform: none;
+  box-shadow: 0 10px 40px rgba(34, 41, 47, 0.12);
+}
+
+.auth-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.btn-link {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a {
+  color: var(--primary);
+}
